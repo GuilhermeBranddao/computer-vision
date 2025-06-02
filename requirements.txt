@@ -3,3 +3,5 @@ numpy
 scipy
 torch
 opencv-python
+graphviz
+scikit-learn
