@@ -353,26 +353,47 @@ class Value:
 
     # --- Funções de Ativação e Outras Funções Matemáticas ---
 
+
     def relu(self):
         """
-        The ReLU activation function.
-        Usage:
+        Função de ativação ReLU (Rectified Linear Unit).
+
+        ReLU(x) = max(0, x)
+        - Se x for negativo, retorna 0.
+        - Caso contrário, retorna x.
+
+        Exemplo de uso:
             >>> x = Value(-2)
             >>> y = x.relu()
-            >>> y.data
-            0
+            >>> print(y.data)  # Saída: 0
         """
-        out = Value(data=0 if self.data < 0 else self.data, _children=(self,), label=f"relu")
+        # Computa a saída: se self.data for negativo, o resultado é 0; caso contrário, mantém o próprio self.data.
+        out = Value(
+            data=0 if self.data < 0 else self.data,
+            _children=(self,),
+            label="ReLU"
+        )
+
         def _backward():
-            # Local gradient:
+            # Cálculo da derivada local de ReLU:
+            # Se self.data for negativo, a derivada é 0;
+            # caso contrário, a derivada é 1.
+            #---
             # x = relu(a)
             # dx/da = 0 if a < 0 else 1
             # Global gradient:
             # dy/da = dy/dx . dx/da = dy/dx . (0 if a < 0 else 1)
-            self.grad += out.grad * (out.data > 0)
-        # Set the backward function on the output node.
+            gradiente_local = 0 if self.data < 0 else 1
+
+            # Atualiza o gradiente de self propagando o gradiente global
+            # do resultado multiplicado pela derivada local.
+            self.grad += out.grad * gradiente_local
+
+        # Atribui a função _backward ao nó de saída para que a retropropagação ocorra corretamente.
         out._backward = _backward
         return out
+    
+
     def tanh(self) -> 'Value':
         """
         Implementa a função de ativação tangente hiperbólica.
