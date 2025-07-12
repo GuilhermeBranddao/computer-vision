@@ -1,0 +1,19 @@
+Para instalar o pacote mahotas:
+
+1- Execute o comando abaixo para instalar os seguintes pacotes:
+
+sudo apt-get install build-essential autoconf libtool pkg-config python-opengl python-imaging python-pyrex python-pyside.qtopengl idle-python2.7 qt4-dev-tools qt4-designer libqtgui4 libqtcore4 libqt4-xml libqt4-test libqt4-script libqt4-network libqt4-dbus python-qt4 python-qt4-gl libgle3 python-dev
+
+
+2- Atualize o conda
+
+conda update conda
+
+
+3- Atualize o Anaconda
+
+conda update anaconda
+
+
+4- Instale o pacote
+pip install mahotas

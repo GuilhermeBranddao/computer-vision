@@ -1,0 +1,72 @@
+# Compilação do OpenCV para adicionar Módulos Extras
+
+
+# Desinstale o OpenCV atual
+pip uninstall opencv-python
+
+# Instale pacotes necessários
+sudo apt-get install build-essential cmake pkg-config
+sudo apt-get install libjpeg8-dev libtiff5-dev libjasper-dev libpng12-dev libjpeg-dev libpng-dev
+sudo apt-get install libavcodec-dev libavformat-dev libswscale-dev libv4l-dev
+sudo apt-get install libxvidcore-dev libx264-dev sphinx-common libtbb-dev yasm libfaac-dev
+sudo apt-get install libgtk-3-dev ibgtk2.0-dev libeigen3-dev libtheora-dev libvorbis-dev libxvidcore-dev libx264-dev 
+sudo apt-get install libatlas-base-dev gfortran
+sudo apt-get install python-dev
+
+# Download do OpenCV direto da fonte
+wget -O opencv.zip https://github.com/opencv/opencv/archive/3.3.0.zip
+unzip opencv.zip
+
+# Download do OpenCV-contrib (com módulos extras) direto da fonte
+wget -O opencv_contrib.zip https://github.com/opencv/opencv_contrib/archive/3.3.0.zip
+unzip opencv_contrib.zip
+
+# Acesse o diretório e crie a pasta build
+cd ~/opencv-3.3.0/
+mkdir build
+cd build
+
+# Cmake para preparar a compilação
+cmake -D BUILD_TIFF=ON \
+	  -D BUILD_opencv_java=OFF \
+	  -D WITH_CUDA=OFF \
+	  -D ENABLE_AVX=ON \
+	  -D WITH_OPENGL=ON \
+	  -D WITH_OPENCL=ON \
+	  -D WITH_IPP=ON \
+	  -D WITH_TBB=ON \
+	  -D WITH_EIGEN=ON \
+	  -D WITH_V4L=ON \
+	  -D WITH_VTK=OFF \
+	  -D BUILD_TESTS=OFF \
+	  -D OPENCV_EXTRA_MODULES_PATH=/home/dmpm/opencv_contrib-3.3.0/modules \
+	  -D BUILD_PERF_TESTS=OFF \
+	  -D CMAKE_BUILD_TYPE=RELEASE \
+	  -D BUILD_opencv_python2=OFF \
+	  -D CMAKE_INSTALL_PREFIX=$(python -c "import sys; print(sys.prefix)") \
+	  -D PYTHON_EXECUTABLE=$(which python) \
+	  -D PYTHON_INCLUDE_DIR=$(python -c "from distutils.sysconfig import get_python_inc; print(get_python_inc())") \
+	  -D PYTHON_PACKAGES_PATH=$(python -c "from distutils.sysconfig import get_python_lib; print(get_python_lib())") \
+	  -D INSTALL_PYTHON_EXAMPLES=ON \
+	  -D INSTALL_C_EXAMPLES=OFF \
+	  -D BUILD_NEW_PYTHON_SUPPORT=ON \
+	  -D BUILD_EXAMPLES=ON ..
+
+# Compilação
+make -j4
+
+# Instalação
+make install
+
+# Adicione esta linha ao final do arquivo ~/.bashrc
+export GIO_EXTRA_MODULES=/usr/lib/x86_64-linux-gnu/gio/modules/
+
+# Teste a instalação
+python
+import cv2
+cv2.__version__
+
+
+
+
+

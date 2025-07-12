@@ -6,3 +6,5 @@ opencv-python
 graphviz
 scikit-learn
 pillow
+imutils
+pillow-heif
