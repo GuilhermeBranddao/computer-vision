@@ -2,7 +2,6 @@
 
 # Imports
 import numpy as np
-import matplotlib.pyplot as plt
 import cv2
 
 def translate(image, x, y):
@@ -54,22 +53,3 @@ def resize(image, width = None, height = None, inter = cv2.INTER_AREA):
 
 	# Retorna a imagem 
 	return resized
-
-def cv2_imshow(winname, image):
-    cv2.imshow(winname, image)
-    
-    while True:
-        key = cv2.waitKey(1) & 0xFF
-        
-        if key == ord('q') or key == 27:  # 'q' ou tecla Esc
-            break
-        
-        # também permite fechar com o botão 'X' da janela
-        if cv2.getWindowProperty(winname, cv2.WND_PROP_VISIBLE) < 1:
-            break
-
-    cv2.destroyAllWindows()
-
-def plt_imshow(image):
-	plt.imshow(image)
-	plt.show()
