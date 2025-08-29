@@ -2,9 +2,11 @@ matplotlib
 numpy
 scipy
 torch
-opencv-python
+# opencv-python
+opencv-contrib-python
 graphviz
 scikit-learn
 pillow
 imutils
 pillow-heif
+sk-video

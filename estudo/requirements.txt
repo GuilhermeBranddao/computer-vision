@@ -1,0 +1,17 @@
+# matplotlib
+# numpy
+# scipy
+# torch
+# opencv-python
+# graphviz
+# scikit-learn
+# pillow
+# imutils
+# pillow-heif
+# sk-video
+
+flask
+torch
+torchvision
+pillow
+

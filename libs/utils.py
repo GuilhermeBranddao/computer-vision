@@ -11,11 +11,22 @@ def get_info_image(image):
     print("Largura: {} pixels".format(image.shape[1]))
     print("Canais: {}".format(image.shape[2]))
 
-def get_pixel(image, xy:tuple):
+def get_pixel(image, coord_xy:tuple):
 	"""
-	xy = (100,100)
+	coord_xy = (100,100)
 	"""
-	return image.getpixel(xy)
+	return image.getpixel(coord_xy)
+
+def set_pixel_value(img, 
+					coord_xy:tuple[int, int], 
+					value:tuple[int, int, int], 
+					):
+	"""
+	Teste
+	"""
+	img.putpixel(coord_xy, value)
+	
+	return img
 
 def translate(image, x, y):
 	"""
@@ -28,15 +39,15 @@ def translate(image, x, y):
 	# Retorna a imagem 
 	return shifted
 
-def convert(image, to='grayscale', open_with="cv2"):
-	if open_with == "skimage":
+def convert(image, to='grayscale', use="cv2"):
+	if use == "skimage":
 		if to == "grayscale":
 			# Convertendo de RGB para Grayscale
 			image = color.rgb2gray(image)
 		
 		elif to == "hsv":
 			image = color.rgb2hsv(image)
-	elif open_with == "pillow":
+	elif use == "pillow":
 		# Converte para escala de cinza
 		image = image.convert("L")
 	
@@ -44,21 +55,21 @@ def convert(image, to='grayscale', open_with="cv2"):
 	return image
 
 
-def crop(image, dim, open_with="cv2"):
+def crop(image, dim, use="cv2"):
 	"""
 	dim = (100, 100, 400, 400)
 	"""
-	if open_with == "pillow":
+	if use == "pillow":
 		image.crop(dim)
 		crop_image = image.crop(dim)
 	return crop_image
 
 
-def rotate(image, angle, center = None, scale = 1.0, open_with="cv2"):
+def rotate(image, angle, center = None, scale = 1.0, use="cv2"):
 	"""
 	Realiza a rotação da imagem
 	"""
-	if open_with == "cv2":
+	if use == "cv2":
 		# Obtém as dimensões da imagem
 		(h, w) = image.shape[:2]
 		# Se o centro for Nenhum, inicialize-o como o centro da imagem
@@ -67,17 +78,17 @@ def rotate(image, angle, center = None, scale = 1.0, open_with="cv2"):
 		# Executa a rotação
 		M = cv2.getRotationMatrix2D(center, angle, scale)
 		rotated = cv2.warpAffine(image, M, (w, h))
-	elif open_with == "pillow":
+	elif use == "pillow":
 		rotated = image.rotate(angle)
 
 	# Retorna a imagem 
 	return rotated
 
-def resize(image, width = None, height = None, inter = cv2.INTER_AREA, open_with="cv2"):
+def resize(image, width = None, height = None, inter = cv2.INTER_AREA, use="cv2"):
 	"""
 	Realiza a redimencionamento da imagem
 	"""
-	if open_with == "cv2":
+	if use == "cv2":
 		# Inicializa as dimensões da imagem a ser redimensionada e obtém o tamanho da imagem
 		dim = None
 		(h, w) = image.shape[:2]
@@ -101,28 +112,28 @@ def resize(image, width = None, height = None, inter = cv2.INTER_AREA, open_with
 		# Redimensiona a imagem
 		resized = cv2.resize(image, dim, interpolation = inter)
 	
-	elif open_with == "pillow":
+	elif use == "pillow":
 		resized = image.resize((width, height))
 
 	# Retorna a imagem 
 	return resized
 
-def enhance_brightness(image, factor, open_with="cv2"):
+def enhance_brightness(image, factor, use="cv2"):
 	"""
 	Aprimoramento para melhorar o brilho da imagem
 	"""
-	if open_with == "pillow":
+	if use == "pillow":
 		# Enhancement
 		enhancer = ImageEnhance.Brightness(image)
 		bright_image = enhancer.enhance(factor)
 	
 	return bright_image
 
-def enhance_contrast(image, factor, open_with="cv2"):
+def enhance_contrast(image, factor, use="cv2"):
 	"""
 	Aprimoramento para melhorar o contraste
 	"""
-	if open_with == "pillow":
+	if use == "pillow":
 		# Muda o contraste da imagem
 		enhancer = ImageEnhance.Contrast(image)
 		contrast_image = enhancer.enhance(factor)
@@ -130,11 +141,11 @@ def enhance_contrast(image, factor, open_with="cv2"):
 	return contrast_image
 
 
-def imshow(winname, image, open_with="cv2"):
+def imshow(winname, image, use="cv2"):
 	"""
 	Exibe a imagem
 	"""
-	if open_with == "cv2":
+	if use == "cv2":
 		cv2.imshow(winname, image)
 		while True:
 			key = cv2.waitKey(1) & 0xFF
@@ -148,24 +159,66 @@ def imshow(winname, image, open_with="cv2"):
 
 		cv2.destroyAllWindows()
 
-	elif open_with == "matplotlib":
+	elif use == "matplotlib":
 		plt.imshow(image)
 		plt.show()
 	
-	elif open_with == "pillow":
+	elif use == "pillow":
 		image.show()
 
 
-def read_image(path, open_with="cv2"):
-	if open_with == "pillow":
+def read_image(path, use="cv2"):
+	if use == "pillow":
 		image = Image.open(path)
-	elif open_with == "cv2":
+	elif use == "cv2":
 		image = cv2.imread(path)
 	return image
 
-def save_image(path, image, open_with="cv2"):
-	if open_with == "pillow":
+def save_image(path, image, use="cv2"):
+	if use == "pillow":
 		image.save(path)
 
-	elif open_with == "cv2":
+	elif use == "cv2":
 		cv2.imwrite(path, image)
+
+import numpy as np
+from PIL import Image
+
+import cv2
+from typing import Union
+
+def apply_grayscale(image: Union[Image.Image, np.ndarray]) -> Union[Image.Image, np.ndarray]:
+    """
+    Garante que a imagem esteja em escala de cinza e retorna no formato original.
+
+    Parâmetros:
+        image: PIL.Image ou NumPy array (OpenCV ou equivalente)
+
+    Retorna:
+        Imagem convertida para grayscale no mesmo tipo recebido
+    """
+    original_type = type(image)
+
+    # --- CASO PIL.Image ---
+    if isinstance(image, Image.Image):
+        if image.mode != 'L':
+            print("Convertendo PIL image para grayscale...")
+            image = image.convert('L')
+        return image
+
+    # --- CASO NumPy array (cv2 ou outros) ---
+    elif isinstance(image, np.ndarray):
+        if len(image.shape) == 3 and image.shape[2] == 3:
+            # Imagem colorida BGR (OpenCV)
+            print("Convertendo NumPy array (possivelmente BGR) para grayscale...")
+            image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            return image_gray
+        elif len(image.shape) == 2:
+            # Já está em grayscale
+            return image
+        else:
+            raise ValueError("Formato NumPy de imagem não reconhecido.")
+    
+    else:
+        raise TypeError(f"Tipo de imagem não suportado: {original_type}")
+
